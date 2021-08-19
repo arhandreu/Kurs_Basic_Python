@@ -3,11 +3,12 @@ import json
 from datetime import datetime
 from progress.bar import Bar
 import uploader_google
+from pprint import pprint
 
 
 with open('token.txt', 'r') as file:
     tokenVK = file.readline().strip()
-    tokenYa = file.readline().strip()
+    #tokenYa = file.readline().strip()
 
 
 class Vkontakte:
@@ -30,15 +31,11 @@ class Vkontakte:
     def save_in_json_file(self, owner_id=None, file_s=True, album_id='profile'):
         res = self.info_photo(owner_id=owner_id, album_id=album_id)
         json_data = []
-        for i in range(int(res['response']['count'])):
-            size = 0
-            for j in range(len(res["response"]["items"][i]["sizes"])):
-                if res["response"]["items"][i]["sizes"][j]["height"]*res["response"]["items"][i]["sizes"][j]["width"] > size:
-                    size = res["response"]["items"][i]["sizes"][j]["height"]*res["response"]["items"][i]["sizes"][j]["width"]
-                    sizes_count = j
+        for item in res["response"]["items"]:
+            max_item = max(item['sizes'], key=lambda size: size['height']*size['width'])
             json_data.append({
-                'file_name': f'{str(res["response"]["items"][i]["likes"]) + ".jpg"}',
-                'size': res["response"]["items"][i]["sizes"][sizes_count],
+                'file_name': f'{str(item["likes"]) + ".jpg"}',
+                'size': max_item,
                 })
         if file_s:
             with open('photo.json', 'w') as f:
@@ -87,5 +84,3 @@ class YandexDisk:
     def create_folder(self, folder_name=datetime.now().strftime("%Y-%m-%d_%H-%M")):
         requests.put(self.URL + "v1/disk/resources", headers=self.headers, params={'path': folder_name})
         return folder_name
-
-
