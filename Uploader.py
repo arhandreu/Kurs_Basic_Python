@@ -34,7 +34,7 @@ class Vkontakte:
         for item in res["response"]["items"]:
             max_item = max(item['sizes'], key=lambda size: size['height']*size['width'])
             json_data.append({
-                'file_name': f'{str(item["likes"]) + ".jpg"}',
+                'file_name': f'{str(item["likes"]["count"]) + ".jpg"}',
                 'size': max_item,
                 })
         if file_s:
