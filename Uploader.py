@@ -1,5 +1,6 @@
 import requests
 import json
+import os
 from datetime import datetime
 from progress.bar import Bar
 import uploader_google
@@ -44,10 +45,11 @@ class Vkontakte:
             json_data = sorted(json_data, key=lambda photo: photo["size"]["height"] * photo["size"]["width"])
             return json_data
 
-    def save_photo(self, owner_id=None, album_id='profile', count_photo=5, path='images/'):
+    def save_photo(self, owner_id=None, album_id='profile', count_photo=5, path='images'):
+        os.mkdir(path)
         json_data = self.save_in_json_file(owner_id=owner_id, file_s=False, album_id=album_id)
         for i in range(count_photo):
-            with open(f'{path + json_data[i]["file_name"]}', 'wb') as image:
+            with open(f'{path + "/" + json_data[i]["file_name"]}', 'wb') as image:
                 image.write(requests.get(json_data[i]["size"]["url"]).content)
 
     def upload_in_ya(self, token_ya, owner_id=None, album_id='profile', count_photo=5):
